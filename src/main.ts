@@ -26,6 +26,10 @@ if (!gameContainer) {
 // The words on screen are copied from that array and then used separately so that they can be removed, whilst maintaining the original data
 // The copied array is then being mapped to a new array that minuses the words that are typed in the input
 // Potentially use a speed-typing API to get the words that need to be typed so its not the same array every time
+// Div for each class is named on template
+// Function that “removes” the word accesses the individual class and removes the display, rather than deleting. Keeping the space but removing the display so it looks like they’re disappearing 
+// Obvs changes the Boolean 
+// Function that is going through each array and when all the Boolean’s are positive it stops the game
 
 const gameArray: Word[] = [...originalWords];
 
