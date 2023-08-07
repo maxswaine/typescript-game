@@ -24,16 +24,6 @@ const getRandomWord = async () => {
   gameInput.value = "";
 };
 
-const getRandomQuote = async () => {
-  const response = await fetch("https://api.quotable.io/random");
-  const quoteResponse: QuoteResponse = await response.json();
-  quoteContainer.innerText = "";
-  quoteResponse.content.split("").forEach((character) => {
-    quoteContainer.innerHTML += `<span>${character}</span>`;
-  });
-  gameInput.value = "";
-};
-
 const checkMatchingValues = () => {
   const inputValue = gameInput.value.split("");
   quoteSpanArray.forEach((character, i) => {
