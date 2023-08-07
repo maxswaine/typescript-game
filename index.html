@@ -4,17 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spacebar Invader</title>
+    <title>Speed Typing</title>
   </head>
   <body>
     <nav class="nav"></nav>
+    <div id="timer">0</div>
     <div class="game-square">
-      <div class="game-square__grid"></div>
+      <div class="game-square__quote">This is going to be where the quote is</div>
+      <textarea id="game-input" class="game-input" autofocus>Quote</textarea>
+      
+      </div>
     </div>
-    <div class="game-input">
-      <label for="gameinput">Start Here</label>
-      <input type="text" id="gameinput" />
-    </div>
+
 
     <script type="module" src="/src/main.ts"></script>
   </body>
