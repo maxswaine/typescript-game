@@ -13,4 +13,3 @@ export type QuoteResponse = {
     readonly dateModified: Date;
   };
   
-  export type API
