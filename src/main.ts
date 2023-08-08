@@ -1,35 +1,43 @@
 import "./styles/main.scss";
-import { RandomWord, QuoteResponse } from "./data/types";
+import { QuoteResponse } from "./data/types";
 
-const gameInput = document.querySelector(".game-input") as HTMLInputElement;
+// DOM Elements
+const gameInput = document.querySelector(
+  ".game-square__input"
+) as HTMLInputElement;
 const quoteContainer = document.querySelector(
   ".game-square__quote"
 ) as HTMLElement;
-let quoteSpanArray: HTMLElement[] = [];
+const timerSecondsDisplay = document.querySelector(
+  ".timer__time--seconds"
+) as HTMLElement;
+const thirtySecondsButton = document.querySelector(
+  ".timer__button--thirty"
+) as HTMLButtonElement;
+const sixtySecondsButton = document.querySelector(
+  ".timer__button--sixty"
+) as HTMLButtonElement;
+const startButton = document.querySelector(
+  ".timer__button--start"
+) as HTMLImageElement;
 
+// State variables
+let quoteSpanArray: HTMLElement[] = [];
+let countdownTime = 0;
+let countdownInstance: any = null;
+
+// Error checks for essential elements
 if (!gameInput) {
   throw new Error("Issue with input box");
 }
-
 if (!quoteContainer) {
   throw new Error("Issue with input area");
 }
+if (!thirtySecondsButton || !sixtySecondsButton || !startButton) {
+  throw new Error("Issue with buttons.");
+}
 
-const getRandomWord = async () => {
-  const response = await fetch(
-    "https://random-word-api.vercel.app/api?words=10"
-  );
-  const word: RandomWord = await response.json();
-  quoteContainer.innerText = "";
-  quoteSpanArray = word.word.split("").map((character) => {
-    const span = document.createElement("span");
-    span.innerText = character;
-    quoteContainer.appendChild(span);
-    return span;
-  });
-  gameInput.value = "";
-};
-
+// Fetch a random quote from the API
 const getRandomQuote = async () => {
   const response = await fetch("https://api.quotable.io/random");
   const quoteResponse: QuoteResponse = await response.json();
@@ -43,33 +51,99 @@ const getRandomQuote = async () => {
   gameInput.value = "";
 };
 
+// Function to calculate words per minute (WPM)
+const calculateWPM = (totalEntries: number, time: number) => {
+  const wpm = totalEntries / 5 / time;
+  return wpm;
+};
+
+// Function to update the timer display
+const updateTimerDisplay = (seconds: number) => {
+  timerSecondsDisplay.innerText = seconds.toString();
+};
+
+// Function to start the countdown
+const startCountdown = (seconds: number) => {
+  if (countdownInstance) {
+    clearInterval(countdownInstance);
+  }
+
+  countdownTime = seconds;
+  updateTimerDisplay(countdownTime);
+
+  countdownInstance = setInterval(() => {
+    countdownTime--;
+    if (countdownTime >= 0) {
+      updateTimerDisplay(countdownTime);
+    } else {
+      clearInterval(countdownInstance);
+    }
+  }, 1000);
+};
+
+// Event listeners
+thirtySecondsButton.addEventListener("click", () => {
+  countdownTime = 30;
+  updateTimerDisplay(countdownTime);
+});
+
+sixtySecondsButton.addEventListener("click", () => {
+  countdownTime = 60;
+  updateTimerDisplay(countdownTime);
+});
+
+startButton.addEventListener("click", () => {
+  if (countdownTime > 0) {
+    startCountdown(countdownTime);
+    gameInput.focus(); // Set focus on the input box
+  }
+});
+
+// Initialize the game when input box is focused
+const startGame = () => {
+  getRandomQuote();
+};
+
+gameInput.addEventListener("focus", startGame);
+gameInput.addEventListener("input", () => {
+  const result = checkMatchingValues();
+  const totalEntries = result.totalEntries;
+  const correctEntries = result.correctEntries;
+  const wpm = calculateWPM(totalEntries, countdownTime);
+  // Do something with the calculated WPM value
+});
+
+// Function to check matching values and return results
 const checkMatchingValues = () => {
   const inputValue = gameInput.value.split("");
   let correct = true;
+  let totalEntries = 0;
+  let correctEntries = 0;
   quoteSpanArray.forEach((character, i) => {
     const char = inputValue[i];
     if (char == null) {
       character.classList.remove("correct");
       character.classList.remove("incorrect");
       correct = false;
+      totalEntries += 1;
     } else if (char === character.innerText) {
       character.classList.add("correct");
       character.classList.remove("incorrect");
+      totalEntries += 1;
+      correctEntries += 1;
     } else {
       character.classList.remove("correct");
       character.classList.add("incorrect");
       correct = false;
+      totalEntries += 1;
     }
   });
-  if (correct) {
+  if (correct || inputValue.length === quoteSpanArray.length) {
     getRandomQuote();
   }
+
+  return {
+    totalEntries: totalEntries,
+    correctEntries: correctEntries,
+  };
 };
-
-const startGame = () => {
-  getRandomQuote();
-};
-
-gameInput.addEventListener("focus", startGame);
-gameInput.addEventListener("input", checkMatchingValues);
-
