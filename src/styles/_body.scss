@@ -6,17 +6,19 @@ body {
   padding: 0;
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-color: $backgroundColor;
   color: white;
+  flex-wrap: wrap;
 }
-
-#timer {
-  position: absolute;
-  top: 2em;
-  font-size: 3em;
+.nav {
+  display: flex;
+  flex-direction: row;
+  &__right {
+    flex-direction: row;
+  }
 }
 
 .game-square {

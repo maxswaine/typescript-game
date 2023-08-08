@@ -1,0 +1,10 @@
+@use "./variables";
+
+.timer {
+  background-color: white;
+  color: black;
+}
+
+.timer__button:hover{
+    cursor: pointer;
+}
