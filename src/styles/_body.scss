@@ -1,55 +1,10 @@
 @use "./variables" as *;
 
-body {
-  font-family: Arial, sans-serif;
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   background-color: $backgroundColor;
   color: white;
-  flex-wrap: wrap;
-}
-.nav {
-  display: flex;
-  flex-direction: row;
-  &__right {
-    flex-direction: row;
-  }
-}
-
-.game-square {
-  background-color: $textBackground;
-  padding: 1em;
-  border-radius: 0.5em;
-  max-width: 90%;
-  width: 80vw;
-  &__quote {
-    font-family: $quoteFont, Arial, Helvetica, sans-serif;
-    font-size: 2em;
-    margin-bottom: 2rem;
-  }
-  .game-input {
-    color: white;
-    background-color: $textBackground;
-    font-family: $inputFont, Arial, Helvetica, sans-serif;
-    font-size: 2em;
-    justify-content: center;
-    border: 2px $backgroundColor solid;
-    width: 100%;
-    height: 8em;
-    margin: auto;
-    resize: none;
-  }
-}
-
-.correct {
-  color: green;
-}
-
-.incorrect {
-  color: red;
+  font-family: $inputFont;
 }
