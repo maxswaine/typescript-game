@@ -1,11 +1,7 @@
 import "./styles/main.scss";
-
-import { Word } from "./data/types";
-
 // DOM Elements
-const gameInput = document.querySelector(
-  ".game-square__input"
-) as HTMLInputElement;
+const gameInput = document.querySelector("#game-input") as HTMLInputElement;
+
 const quoteContainer = document.querySelector(
   ".game-square__quote"
 ) as HTMLElement;
@@ -20,7 +16,7 @@ const sixtySecondsButton = document.querySelector(
 ) as HTMLButtonElement;
 const startButton = document.querySelector(
   ".timer__button--start"
-) as HTMLImageElement;
+) as HTMLButtonElement;
 
 // State variables
 let quoteSpanArray: HTMLElement[] = [];
@@ -44,7 +40,7 @@ if (!thirtySecondsButton || !sixtySecondsButton || !startButton) {
 const getRandomWord = async () => {
   try {
     const response = await fetch(
-      `https://random-word-api.herokuapp.com/word?number=${level}`
+      `https://random-word-api.herokuapp.com/word?number=5`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch random words");
@@ -117,6 +113,10 @@ startButton.addEventListener("click", () => {
 
 // Initialize the game when input box is focused
 const startGame = () => {
+  if (countdownTime > 0) {
+    startCountdown(countdownTime);
+    gameInput.focus(); // Set focus on the input box
+  }
   getRandomWord();
 };
 
@@ -126,6 +126,7 @@ gameInput.addEventListener("input", () => {
   const totalEntries = result.totalEntries;
   const correctEntries = result.correctEntries;
   const wpm = calculateWPM(totalEntries, countdownTime);
+  console.log("30s pressed");
 
   // Check if the user has typed the entire current word
   if (correctEntries === quoteSpanArray.length) {
