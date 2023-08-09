@@ -1,5 +1,5 @@
 import "./styles/main.scss";
-import { QuoteResponse } from "./data/types";
+import { Word } from "./data/types";
 
 // DOM Elements
 const gameInput = document.querySelector(
@@ -25,6 +25,7 @@ const startButton = document.querySelector(
 let quoteSpanArray: HTMLElement[] = [];
 let countdownTime = 0;
 let countdownInstance: any = null;
+let level = 0;
 
 // Error checks for essential elements
 if (!gameInput) {
@@ -38,17 +39,30 @@ if (!thirtySecondsButton || !sixtySecondsButton || !startButton) {
 }
 
 // Fetch a random quote from the API
-const getRandomQuote = async () => {
-  const response = await fetch("https://api.quotable.io/random");
-  const quoteResponse: QuoteResponse = await response.json();
-  quoteContainer.innerText = "";
-  quoteSpanArray = quoteResponse.content.split("").map((character) => {
-    const span = document.createElement("span");
-    span.innerText = character;
-    quoteContainer.appendChild(span);
-    return span;
-  });
-  gameInput.value = "";
+const getRandomWord = async () => {
+  try {
+    const response = await fetch(
+      `https://random-word-api.herokuapp.com/word?number=${level}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch random words");
+    }
+
+    const words: string[] = await response.json();
+    quoteContainer.innerText = "";
+
+    quoteSpanArray = words.flatMap((word) => {
+      return word.split("").map((character) => {
+        const span = document.createElement("span");
+        span.innerText = character;
+        quoteContainer.appendChild(span);
+        return span;
+      });
+    });
+    gameInput.value = "";
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
 // Function to calculate words per minute (WPM)
@@ -101,7 +115,7 @@ startButton.addEventListener("click", () => {
 
 // Initialize the game when input box is focused
 const startGame = () => {
-  getRandomQuote();
+  getRandomWord();
 };
 
 gameInput.addEventListener("focus", startGame);
@@ -139,7 +153,8 @@ const checkMatchingValues = () => {
     }
   });
   if (correct || inputValue.length === quoteSpanArray.length) {
-    getRandomQuote();
+    getRandomWord();
+    level += 1;
   }
 
   return {
