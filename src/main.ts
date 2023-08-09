@@ -1,4 +1,5 @@
 import "./styles/main.scss";
+
 import { Word } from "./data/types";
 
 // DOM Elements
@@ -25,7 +26,8 @@ const startButton = document.querySelector(
 let quoteSpanArray: HTMLElement[] = [];
 let countdownTime = 0;
 let countdownInstance: any = null;
-let level = 0;
+
+let level = 1;
 
 // Error checks for essential elements
 if (!gameInput) {
@@ -124,6 +126,13 @@ gameInput.addEventListener("input", () => {
   const totalEntries = result.totalEntries;
   const correctEntries = result.correctEntries;
   const wpm = calculateWPM(totalEntries, countdownTime);
+
+  // Check if the user has typed the entire current word
+  if (correctEntries === quoteSpanArray.length) {
+    getRandomWord();
+    level += 1;
+  }
+
   // Do something with the calculated WPM value
 });
 
