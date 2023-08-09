@@ -1,10 +1,37 @@
-@use "./variables";
-
 .timer {
-  background-color: white;
-  color: black;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+}
+.timer__time-choice {
+  margin-top: 3em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.timer__button {
+  height: 3em;
+  width: 40vw;
+  border-radius: 20px;
 }
 
-.timer__button:hover{
-    cursor: pointer;
+.timer__time--seconds {
+  height: 15vh;
+  font-size: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer__button:hover {
+  cursor: pointer;
+}
+
+.timer__settings {
+  display: flex;
+  justify-content: space-evenly;
+  img {
+    height: 4.5em;
+  }
 }

@@ -1,5 +1,7 @@
 import "./styles/main.scss";
 
+import { Word } from "./data/types";
+
 // DOM Elements
 const gameInput = document.querySelector(
   ".game-square__input"
@@ -24,6 +26,7 @@ const startButton = document.querySelector(
 let quoteSpanArray: HTMLElement[] = [];
 let countdownTime = 0;
 let countdownInstance: any = null;
+
 let level = 1;
 
 // Error checks for essential elements
@@ -59,7 +62,6 @@ const getRandomWord = async () => {
       });
     });
     gameInput.value = "";
-    // Increment level based on the number of words fetched
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -161,6 +163,7 @@ const checkMatchingValues = () => {
   });
   if (correct || inputValue.length === quoteSpanArray.length) {
     getRandomWord();
+    level += 1;
   }
 
   return {
