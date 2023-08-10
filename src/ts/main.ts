@@ -1,4 +1,5 @@
-import "./styles/main.scss";
+import "../styles/main.scss";
+import { Word } from "../data/types";
 // DOM Elements
 const gameInput = document.querySelector("#game-input") as HTMLInputElement;
 
@@ -17,6 +18,7 @@ const sixtySecondsButton = document.querySelector(
 const startButton = document.querySelector(
   ".timer__button--start"
 ) as HTMLButtonElement;
+const wpm = document.querySelector(".game-square__wpm") as HTMLElement;
 
 // State variables
 let quoteSpanArray: HTMLElement[] = [];
@@ -37,26 +39,35 @@ if (!thirtySecondsButton || !sixtySecondsButton || !startButton) {
 }
 
 // Fetch a random quote from the API
-const getRandomWord = async () => {
+export const getRandomWord = async () => {
   try {
     const response = await fetch(
-      `https://random-word-api.herokuapp.com/word?number=5`
+      `https://random-word-api.herokuapp.com/word?number=${level}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch random words");
     }
 
-    const words: string[] = await response.json();
-    quoteContainer.innerText = "";
+    const words = await response.json(); // Array of words
+    quoteContainer.innerText = ""; // Clear previous content
 
-    quoteSpanArray = words.flatMap((word) => {
-      return word.split("").map((character) => {
+    quoteSpanArray = words.flatMap((word: Word, index: number) => {
+      const wordSpanArray = word.split("").map((character) => {
         const span = document.createElement("span");
         span.innerText = character;
-        quoteContainer.appendChild(span);
         return span;
       });
+
+      if (index !== words.length - 1) {
+        const spaceSpan = document.createElement("span");
+        spaceSpan.innerText = " ";
+        wordSpanArray.push(spaceSpan);
+      }
+
+      quoteContainer.append(...wordSpanArray); // Append word and space spans
+      return wordSpanArray;
     });
+
     gameInput.value = "";
   } catch (error) {
     console.error("An error occurred:", error);
@@ -67,6 +78,13 @@ const getRandomWord = async () => {
 const calculateWPM = (totalEntries: number, time: number) => {
   const wpm = totalEntries / 5 / time;
   return wpm;
+};
+const updateWPMCounter = () => {
+  const result = checkMatchingValues();
+  const totalEntries = result.totalEntries;
+  const wpmValue = calculateWPM(totalEntries, countdownTime);
+
+  wpm.innerText = `WPM: ${Math.round(wpmValue)}`;
 };
 
 // Function to update the timer display
@@ -109,6 +127,9 @@ startButton.addEventListener("click", () => {
     startCountdown(countdownTime);
     gameInput.focus(); // Set focus on the input box
   }
+
+  getRandomWord();
+  updateWPMCounter(); // Call the update function when starting the game
 });
 
 // Initialize the game when input box is focused
@@ -121,25 +142,12 @@ const startGame = () => {
 };
 
 gameInput.addEventListener("focus", startGame);
-gameInput.addEventListener("input", () => {
-  const result = checkMatchingValues();
-  const totalEntries = result.totalEntries;
-  const correctEntries = result.correctEntries;
-  const wpm = calculateWPM(totalEntries, countdownTime);
-  console.log("30s pressed");
-
-  // Check if the user has typed the entire current word
-  if (correctEntries === quoteSpanArray.length) {
-    getRandomWord();
-    level += 1;
-  }
-
-  // Do something with the calculated WPM value
-});
+gameInput.addEventListener("input", updateWPMCounter);
 
 // Function to check matching values and return results
 const checkMatchingValues = () => {
   const inputValue = gameInput.value.split("");
+  const wpm: Wpm = {}
   let correct = true;
   let totalEntries = 0;
   let correctEntries = 0;
@@ -166,9 +174,4 @@ const checkMatchingValues = () => {
     getRandomWord();
     level += 1;
   }
-
-  return {
-    totalEntries: totalEntries,
-    correctEntries: correctEntries,
-  };
 };

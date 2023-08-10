@@ -1,0 +1,11 @@
+.correct {
+  color: grey;
+  opacity: 0.7;
+  transition: 0.15s ease-in-out;
+}
+
+.incorrect {
+  color: red;
+  text-decoration: underline;
+  opacity: 0.8v;
+}
