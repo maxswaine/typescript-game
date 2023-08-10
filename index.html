@@ -8,14 +8,16 @@
   </head>
   <body>
     <nav class="nav">
-      <div class="nav__left">
-        <h2 class="nav__title">HotKeys</h2>
-      </div>
-      <div class="nav__right">
-        <h2 class="nav__link">Restart</h2>
-        <h2 class="nav__link">How to play</h2>
-      </div>
+      <h2 class="nav__title">HotKeys</h2>
+      <h2 class="nav__restart">Restart</h2>
+      <h2 class="nav__link">How to play</h2>
     </nav>
+    <div class="fire-image">
+      <img
+        src="./src/images/42753526-removebg-preview.png"
+        alt="keyboard key firing a fireball"
+      />
+    </div>
     <div class="timer">
       <div class="timer__time-choice">
         <button class="timer__button--thirty">30 seconds</button>
@@ -35,12 +37,10 @@
     </div>
     <div class="game-square">
       <div class="game-square__quote">
-        <div class="game-square__wpm">0</div>
-        This is going to be where the quote is
+        <div class="game-square__wpm"></div>
+        <div class="game-square__word"></div>
       </div>
-      <textarea id="game-input" class="game-square__input" autofocus>
-Quote</textarea
-      >
+      <textarea id="game-input" class="game-square__input" autofocus></textarea>
     </div>
     <script type="module" src="./src/ts/main.ts"></script>
   </body>

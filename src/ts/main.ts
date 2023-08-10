@@ -1,8 +1,7 @@
 import "../styles/main.scss";
 import { Word } from "../data/types";
-// DOM Elements
-const gameInput = document.querySelector("#game-input") as HTMLInputElement;
 
+const gameInput = document.querySelector("#game-input") as HTMLInputElement;
 const quoteContainer = document.querySelector(
   ".game-square__quote"
 ) as HTMLElement;
@@ -18,27 +17,29 @@ const sixtySecondsButton = document.querySelector(
 const startButton = document.querySelector(
   ".timer__button--start"
 ) as HTMLButtonElement;
-const wpm = document.querySelector(".game-square__wpm") as HTMLElement;
+const restartButton = document.querySelector(
+  ".timer__button--restart"
+) as HTMLButtonElement;
+const howToPlay = document.querySelector(".nav__link") as HTMLElement;
+const restartText = document.querySelector(".nav__restart") as HTMLElement;
+const wpmElement = document.querySelector(".game-square__wpm") as HTMLElement;
 
-// State variables
 let quoteSpanArray: HTMLElement[] = [];
 let countdownTime = 0;
 let countdownInstance: any = null;
-
 let level = 1;
 
-// Error checks for essential elements
-if (!gameInput) {
-  throw new Error("Issue with input box");
-}
-if (!quoteContainer) {
-  throw new Error("Issue with input area");
-}
-if (!thirtySecondsButton || !sixtySecondsButton || !startButton) {
-  throw new Error("Issue with buttons.");
+if (
+  !gameInput ||
+  !quoteContainer ||
+  !thirtySecondsButton ||
+  !sixtySecondsButton ||
+  !startButton ||
+  !restartButton
+) {
+  throw new Error("Issue with elements.");
 }
 
-// Fetch a random quote from the API
 export const getRandomWord = async () => {
   try {
     const response = await fetch(
@@ -48,8 +49,8 @@ export const getRandomWord = async () => {
       throw new Error("Failed to fetch random words");
     }
 
-    const words = await response.json(); // Array of words
-    quoteContainer.innerText = ""; // Clear previous content
+    const words = await response.json();
+    quoteContainer.innerText = "";
 
     quoteSpanArray = words.flatMap((word: Word, index: number) => {
       const wordSpanArray = word.split("").map((character) => {
@@ -64,7 +65,7 @@ export const getRandomWord = async () => {
         wordSpanArray.push(spaceSpan);
       }
 
-      quoteContainer.append(...wordSpanArray); // Append word and space spans
+      quoteContainer.append(...wordSpanArray);
       return wordSpanArray;
     });
 
@@ -74,25 +75,10 @@ export const getRandomWord = async () => {
   }
 };
 
-// Function to calculate words per minute (WPM)
-const calculateWPM = (totalEntries: number, time: number) => {
-  const wpm = totalEntries / 5 / time;
-  return wpm;
-};
-const updateWPMCounter = () => {
-  const result = checkMatchingValues();
-  const totalEntries = result.totalEntries;
-  const wpmValue = calculateWPM(totalEntries, countdownTime);
-
-  wpm.innerText = `WPM: ${Math.round(wpmValue)}`;
-};
-
-// Function to update the timer display
 const updateTimerDisplay = (seconds: number) => {
   timerSecondsDisplay.innerText = seconds.toString();
 };
 
-// Function to start the countdown
 const startCountdown = (seconds: number) => {
   if (countdownInstance) {
     clearInterval(countdownInstance);
@@ -107,11 +93,11 @@ const startCountdown = (seconds: number) => {
       updateTimerDisplay(countdownTime);
     } else {
       clearInterval(countdownInstance);
+      window.alert(`Game Over! You got to Level ${level}`);
     }
   }, 1000);
 };
 
-// Event listeners
 thirtySecondsButton.addEventListener("click", () => {
   countdownTime = 30;
   updateTimerDisplay(countdownTime);
@@ -125,53 +111,61 @@ sixtySecondsButton.addEventListener("click", () => {
 startButton.addEventListener("click", () => {
   if (countdownTime > 0) {
     startCountdown(countdownTime);
-    gameInput.focus(); // Set focus on the input box
+    gameInput.focus();
   }
-
-  getRandomWord();
-  updateWPMCounter(); // Call the update function when starting the game
+  updateWPMCounter();
 });
 
-// Initialize the game when input box is focused
 const startGame = () => {
   if (countdownTime > 0) {
     startCountdown(countdownTime);
-    gameInput.focus(); // Set focus on the input box
+    gameInput.focus();
   }
-  getRandomWord();
 };
 
-gameInput.addEventListener("focus", startGame);
-gameInput.addEventListener("input", updateWPMCounter);
-
-// Function to check matching values and return results
 const checkMatchingValues = () => {
   const inputValue = gameInput.value.split("");
-  const wpm: Wpm = {}
   let correct = true;
-  let totalEntries = 0;
-  let correctEntries = 0;
+
   quoteSpanArray.forEach((character, i) => {
     const char = inputValue[i];
+
     if (char == null) {
       character.classList.remove("correct");
       character.classList.remove("incorrect");
       correct = false;
-      totalEntries += 1;
     } else if (char === character.innerText) {
       character.classList.add("correct");
       character.classList.remove("incorrect");
-      totalEntries += 1;
-      correctEntries += 1;
     } else {
       character.classList.remove("correct");
       character.classList.add("incorrect");
       correct = false;
-      totalEntries += 1;
     }
   });
+
   if (correct || inputValue.length === quoteSpanArray.length) {
     getRandomWord();
     level += 1;
   }
 };
+
+const rules = () => {
+  window.alert(
+    "Welcome to the game! Choose your time, press the start button and type like the wind!"
+  );
+};
+
+const restart = () => {
+  level = 1;
+  quoteContainer.innerText = "";
+  gameInput.innerText = "";
+  clearInterval(countdownInstance);
+  timerSecondsDisplay.innerText = "0";
+};
+
+restartButton.addEventListener("click", restart);
+restartText.addEventListener("click", restart);
+gameInput.addEventListener("focus", startGame);
+gameInput.addEventListener("input", checkMatchingValues);
+howToPlay.addEventListener("click", rules);

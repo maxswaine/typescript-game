@@ -3,11 +3,11 @@
   flex-direction: column;
   justify-content: center;
   &__quote {
+    margin-top: 20px;
     font-family: $quoteFont, Arial, Helvetica, sans-serif;
     text-align: center;
     justify-content: space-between;
     font-size: 2.5em;
-    width: 60vw;
     height: auto;
   }
   &__input {
@@ -15,5 +15,6 @@
     min-width: 60%;
     margin: auto;
     min-height: 30vh;
+    font-size: 2em;
   }
 }
