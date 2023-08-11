@@ -5,6 +5,8 @@
 
 - This works using a random word API (https://random-word-api.herokuapp.com/home) which will iteratively add a new word when you have successfully typed the words before. Try and get to the highest level that you can.
 
+- Find the website here: https://maxswaine.github.io/typescript-game/
+
 ## The code:
 
 This code works with several functions: The most important one being the function that gets the words from the API and splits up all the words into individual spans on the page to be analysed by another function later.
