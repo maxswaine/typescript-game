@@ -185,9 +185,11 @@ const rules = () => {
 
 const handleImagePress = () => {
   confetti(fireConfetti);
+  console.log("image has been pressed");
   counter += 1;
   if (counter > 5) {
     window.alert("Congrats, your keyboard exploded. Better luck next time");
+    counter = 0;
   }
 };
 

@@ -16,5 +16,7 @@
     margin: auto;
     min-height: 30vh;
     font-size: 2em;
+    border: $textBackground 4px solid;
+    border-radius: 20px;
   }
 }
